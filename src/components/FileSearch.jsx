@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faClose } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import useKeyPress from "../hooks/useKeyPress";
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
   const [value, setValue] = useState("");
+  const enterPressed = useKeyPress(13);
+  const escPressed = useKeyPress(27);
 
   let node = useRef(null);
 
@@ -14,19 +17,14 @@ const FileSearch = ({ title, onFileSearch }) => {
     setInputActive(false);
     setValue("");
   };
+
   useEffect(() => {
-    const handleInputEvent = (e) => {
-      const { keyCode } = e;
-      if (keyCode === 13 && inputActive) {
-        onFileSearch(value);
-      } else if (keyCode === 27 && inputActive) {
-        closeSearch(e);
-      }
-    };
-    document.addEventListener("keyup", handleInputEvent);
-    return () => {
-      document.removeEventListener("keyup", handleInputEvent);
-    };
+    if (enterPressed && inputActive) {
+      onFileSearch(value);
+    }
+    if (escPressed && inputActive) {
+      closeSearch();
+    }
   });
 
   useEffect(() => {
@@ -36,10 +34,10 @@ const FileSearch = ({ title, onFileSearch }) => {
   }, [inputActive]);
 
   return (
-    <div className="alert alert-primary d-flex justify-content-between align-items-center mb-0">
+    <div className="no-border file-search alert alert-primary d-flex justify-content-between align-items-center mb-0">
       {!inputActive && (
         <>
-          <span>{title}</span>
+          <span className="fs-2">{title}</span>
           <button
             type="button"
             className="icon-button"
@@ -54,7 +52,7 @@ const FileSearch = ({ title, onFileSearch }) => {
       {inputActive && (
         <>
           <input
-            className="form-control"
+            className="form-control me-2"
             value={value}
             ref={node}
             onChange={(e) => {
