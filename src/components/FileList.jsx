@@ -10,11 +10,17 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [value, setValue] = useState("");
   const enterPressed = useKeyPress(13);
   const escPressed = useKeyPress(27);
+  let node = useRef(null);
 
-  const closeSearch = (e) => {
-    e.preventDefault();
+  console.log(files);
+
+  const closeSearch = (editItem) => {
     setEditStatus(false);
     setValue("");
+    // if we are editing a newly created file, we should delete this file when pressing esc
+    if (editItem.isNew) {
+      onFileDelete(editItem.id);
+    }
   };
 
   useEffect(() => {
@@ -29,6 +35,20 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     }
   });
 
+  useEffect(() => {
+    const newFile = files.find((file) => file.isNew);
+    if (newFile) {
+      setEditStatus(newFile.id);
+      setValue(newFile.title);
+    }
+  }, [files]);
+
+  useEffect(() => {
+    if (editStatus) {
+      node.current.focus();
+    }
+  }, [editStatus]);
+
   return (
     <ul className="list-group list-group-flush file-list">
       {files.map((file) => (
@@ -36,13 +56,13 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
           className="list-group-item bg-light file-item d-flex align-items-center file-item mx-0"
           key={file.id}
         >
-          {file.id !== editStatus && (
+          {file.id !== editStatus && !file.isNew && (
             <>
               <span className="col-2">
                 <FontAwesomeIcon size="lg" icon={faMarkdown} />
               </span>
               <span
-                className="col-8 c-link"
+                className="col-6 c-link"
                 onClick={() => {
                   onFileClick(file.id);
                 }}
@@ -51,7 +71,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               </span>
               <button
                 type="button"
-                className="icon-button col-1"
+                className="icon-button col-2"
                 onClick={() => {
                   setEditStatus(file.id);
                   setValue(file.title);
@@ -61,19 +81,21 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               </button>
               <button
                 type="button"
-                className="icon-button col-1"
-                onClick={() => {}}
+                className="icon-button col-2"
+                onClick={() => onFileDelete(file.id)}
               >
                 <FontAwesomeIcon icon={faTrash} title="删除" size="lg" />
               </button>
             </>
           )}
-          {file.id === editStatus && (
+          {(file.id === editStatus || file.isNew) && (
             <>
               <span className="col-10">
                 <input
                   className="form-control"
                   value={value}
+                  ref={node}
+                  placeholder="请输入文件名称"
                   onChange={(e) => {
                     setValue(e.target.value);
                   }}
@@ -82,7 +104,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               <button
                 type="button"
                 className="icon-button col-2"
-                onClick={closeSearch}
+                onClick={() => closeSearch(file)}
               >
                 <FontAwesomeIcon icon={faClose} title="关闭" size="lg" />
               </button>
