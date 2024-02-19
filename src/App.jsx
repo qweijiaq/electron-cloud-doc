@@ -4,6 +4,7 @@ import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import defaultFiles from "./utils/defaultFiles";
 import BottomBtn from "./components/BottomBtn";
+import TabList from "./components/TabList";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faFileImport } from "@fortawesome/free-solid-svg-icons";
 
@@ -38,8 +39,16 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="col-9 bg-primary right-panel">
-          <h1>右侧</h1>
+        <div className="col-9 right-panel">
+          <TabList
+            files={defaultFiles}
+            activeId="1"
+            unsaveIds="3"
+            onTabClick={(id) => console.log(id)}
+            onCloseTab={(id) => {
+              console.log("close", id);
+            }}
+          />
         </div>
       </div>
     </div>
