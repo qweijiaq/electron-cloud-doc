@@ -12,13 +12,13 @@ const TabList = ({ files, activeId, unsaveIds, onTabClick, onCloseTab }) => {
         const withUnsavedMark = unsaveIds.includes(file.id);
         const fClassName = classNames({
           "nav-link": true,
+          "no-border": true,
           active: file.id === activeId,
           withUnsaved: withUnsavedMark,
         });
         return (
           <li className="nav-item" key={file.id}>
-            <a
-              href="#"
+            <button
               className={fClassName}
               onClick={(e) => {
                 e.preventDefault();
@@ -38,7 +38,7 @@ const TabList = ({ files, activeId, unsaveIds, onTabClick, onCloseTab }) => {
               {withUnsavedMark && (
                 <span className="rounded-circle ms-2 unsaved-icon"></span>
               )}
-            </a>
+            </button>
           </li>
         );
       })}
