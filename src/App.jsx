@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <div className="row">
         <div className="col-3 left-panel">
-          <FileSearch title="我的云文档" onFileSearch={() => {}} />
+          <FileSearch onFileSearch={() => {}} />
         </div>
         <div className="col-9 bg-primary right-panel">
           <h1>右侧</h1>
